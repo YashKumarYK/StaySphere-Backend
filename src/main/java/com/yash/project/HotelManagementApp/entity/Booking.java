@@ -1,7 +1,6 @@
 package com.yash.project.HotelManagementApp.entity;
 
 import com.yash.project.HotelManagementApp.enums.BookingStatus;
-import com.yash.project.HotelManagementApp.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

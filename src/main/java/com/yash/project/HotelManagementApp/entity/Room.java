@@ -38,7 +38,7 @@ public class Room {
     private Integer totalCount;
 
     @Column(nullable = false)
-    private Integer capcaity;
+    private Integer capacity;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
