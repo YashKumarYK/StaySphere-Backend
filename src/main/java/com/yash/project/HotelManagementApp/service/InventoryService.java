@@ -7,5 +7,5 @@ public interface InventoryService{
 
     void initializeRoomForYear(Room room);
 
-    void deleteFutureInventory(Room room);
+    void deleteAllInventories(Room room);
 }

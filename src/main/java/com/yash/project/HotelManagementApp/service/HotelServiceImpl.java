@@ -5,6 +5,7 @@ import com.yash.project.HotelManagementApp.dto.HotelDto;
 import com.yash.project.HotelManagementApp.entity.Hotel;
 import com.yash.project.HotelManagementApp.entity.Room;
 import com.yash.project.HotelManagementApp.repository.HotelRepository;
+import com.yash.project.HotelManagementApp.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -19,6 +20,8 @@ public class HotelServiceImpl implements HotelService{
     private final HotelRepository hotelRepository;
     private final ModelMapper modelMapper;
     private final InventoryService inventoryService;
+    private final RoomRepository roomRepository;
+
     @Override
     public HotelDto createNewHotel(HotelDto hotelDto) {
         log.info("Creating a new Hotel with name:{}", hotelDto.getName());
@@ -57,11 +60,13 @@ public class HotelServiceImpl implements HotelService{
         Hotel hotel = hotelRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Hotel not found with id:" + id));
 
-        hotelRepository.deleteById(id);
+
 
         for(Room room: hotel.getRooms()){
-            inventoryService.deleteFutureInventory(room);
+            inventoryService.deleteAllInventories(room);
+            roomRepository.deleteById(room.getId());
         }
+        hotelRepository.deleteById(id);
 
     }
 
