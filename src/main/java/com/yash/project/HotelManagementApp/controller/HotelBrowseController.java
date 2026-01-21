@@ -2,6 +2,7 @@ package com.yash.project.HotelManagementApp.controller;
 
 import com.yash.project.HotelManagementApp.dto.HotelDto;
 import com.yash.project.HotelManagementApp.dto.HotelInfoDto;
+import com.yash.project.HotelManagementApp.dto.HotelPriceDto;
 import com.yash.project.HotelManagementApp.dto.HotelSearchRequest;
 import com.yash.project.HotelManagementApp.service.HotelService;
 import com.yash.project.HotelManagementApp.service.InventoryService;
@@ -20,9 +21,9 @@ public class HotelBrowseController {
     private final HotelService hotelService;
 
     @GetMapping("/search")
-    public ResponseEntity<Page<HotelDto>> searchHotel(@RequestBody HotelSearchRequest hotelSearchRequest){
+    public ResponseEntity<Page<HotelPriceDto>> searchHotel(@RequestBody HotelSearchRequest hotelSearchRequest){
 
-        Page<HotelDto> page = inventoryService.searchHotels(hotelSearchRequest);
+        Page<HotelPriceDto> page = inventoryService.searchHotels(hotelSearchRequest);
         return ResponseEntity.ok(page);
     }
 
