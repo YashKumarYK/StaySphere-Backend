@@ -577,8 +577,6 @@ STRIPE_WEBHOOK_SECRET       # From Stripe webhook settings
 
 ## 📈 Recent Improvements
 
-### Version 0.0.2-HOTFIX (January 2026)
-
 #### Critical Fixes Applied ✅
 1. **Fixed Authorization Logic** - Hotel managers can now access their hotels
 2. **Fixed Type Mismatch** - Corrected User vs Long comparison errors
@@ -731,46 +729,6 @@ docker-compose logs -f app
 
 ---
 
-## 🤝 Contributing
-
-### Code Standards
-- Follow Google Java Style Guide
-- Use meaningful variable and method names
-- Add JavaDoc comments for public methods
-- Write unit tests for new features
-- Keep methods focused and single-responsibility
-
-### Pull Request Process
-1. Create feature branch: `git checkout -b feature/your-feature`
-2. Commit changes: `git commit -am 'Add feature description'`
-3. Push to branch: `git push origin feature/your-feature`
-4. Submit pull request with description
-
-### Bug Reports
-Include:
-- Detailed description of the issue
-- Steps to reproduce
-- Expected vs actual behavior
-- Error logs/stack traces
-- System information
-
----
-
-## 📄 License
-
-This project is proprietary software. All rights reserved.
-
----
-
-## 📞 Support & Contact
-
-For issues, questions, or improvements:
-- Create an issue in the GitHub repository
-- Contact the development team
-- Review API documentation at `/api/v1/swagger-ui.html`
-
----
-
 ## 🚀 Future Roadmap
 
 ### Planned Features
@@ -802,7 +760,6 @@ For issues, questions, or improvements:
 ---
 
 **Last Updated**: January 24, 2026  
-**Version**: 0.0.2-HOTFIX  
 **Status**: ✅ Production Ready (after testing)
 
 Made with ❤️ by Yash Kumar
