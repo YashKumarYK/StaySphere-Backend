@@ -2,6 +2,7 @@ package com.yash.project.HotelManagementApp.service;
 
 import com.yash.project.HotelManagementApp.Exception.ResourceNotFoundException;
 import com.yash.project.HotelManagementApp.Exception.UnAuthorisedException;
+import com.yash.project.HotelManagementApp.dto.BookingDto;
 import com.yash.project.HotelManagementApp.dto.HotelDto;
 import com.yash.project.HotelManagementApp.dto.HotelInfoDto;
 import com.yash.project.HotelManagementApp.dto.RoomDto;
@@ -18,6 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.yash.project.HotelManagementApp.util.AppUtils.getCurrentUser;
 
 @Service
 @Slf4j
@@ -53,7 +57,7 @@ public class HotelServiceImpl implements HotelService{
 
         //checking authorization
         User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(user.equals(hotel.getOwner())){
+        if(!user.equals(hotel.getOwner())){
             throw new UnAuthorisedException("This user does not own this hotel with id: "+id);
         }
 
@@ -68,7 +72,7 @@ public class HotelServiceImpl implements HotelService{
 
         //checking authorization
         User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(user.equals(hotel.getOwner())){
+        if(!user.equals(hotel.getOwner())){
             throw new UnAuthorisedException("This user does not own this hotel with id: "+id);
         }
 
@@ -87,7 +91,7 @@ public class HotelServiceImpl implements HotelService{
 
         //checking authorization
         User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(user.equals(hotel.getOwner())){
+        if(!user.equals(hotel.getOwner())){
             throw new UnAuthorisedException("This user does not own this hotel with id: "+id);
         }
 
@@ -110,7 +114,7 @@ public class HotelServiceImpl implements HotelService{
 
         //checking authorization
         User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(user.equals(hotel.getOwner())){
+        if(!user.equals(hotel.getOwner())){
             throw new UnAuthorisedException("This user does not own this hotel with id: "+HotelId);
         }
 
@@ -134,4 +138,19 @@ public class HotelServiceImpl implements HotelService{
                 .room(rooms)
                 .build();
     }
+
+    @Override
+    public List<HotelDto> getAllHotels() {
+
+        User user = getCurrentUser();
+        log.info("Getting all hotels for the admin user: {}", user);
+        List<Hotel> hotels = hotelRepository.findByOwner(user);
+
+        return hotels
+                .stream()
+                .map((element)-> modelMapper.map(element, HotelDto.class))
+                .collect(Collectors.toList());
+    }
+
+
 }

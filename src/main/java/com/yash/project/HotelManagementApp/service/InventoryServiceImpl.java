@@ -1,24 +1,31 @@
 package com.yash.project.HotelManagementApp.service;
 
-import com.yash.project.HotelManagementApp.dto.HotelDto;
-import com.yash.project.HotelManagementApp.dto.HotelPriceDto;
-import com.yash.project.HotelManagementApp.dto.HotelSearchRequest;
+import com.yash.project.HotelManagementApp.Exception.ResourceNotFoundException;
+import com.yash.project.HotelManagementApp.dto.*;
 import com.yash.project.HotelManagementApp.entity.Hotel;
 import com.yash.project.HotelManagementApp.entity.Inventory;
 import com.yash.project.HotelManagementApp.entity.Room;
+import com.yash.project.HotelManagementApp.entity.User;
 import com.yash.project.HotelManagementApp.repository.HotelMinPriceRepository;
 import com.yash.project.HotelManagementApp.repository.InventoryRepository;
+import com.yash.project.HotelManagementApp.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.yash.project.HotelManagementApp.util.AppUtils.getCurrentUser;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +34,7 @@ public class InventoryServiceImpl implements InventoryService{
 
     private final InventoryRepository inventoryRepository;
     private final ModelMapper modelMapper;
+    private final RoomRepository roomRepository;
 
     private final HotelMinPriceRepository hotelMinPriceRepository;
     @Override
@@ -64,5 +72,42 @@ public class InventoryServiceImpl implements InventoryService{
         //Business Logic
         Page<HotelPriceDto> hotelPage = hotelMinPriceRepository.findHotelsWithAvailableInventory(hotelSearchRequest.getCity(), hotelSearchRequest.getStartDate(), hotelSearchRequest.getEndDate(), hotelSearchRequest.getRoomsCount(), dateCount, pageable);
         return hotelPage;
+    }
+
+    @Override
+    public List<InventoryDto> getAllInventoryByRoom(Long roomId) {
+
+        log.info("Getting All Inventory by room with id: "+roomId);
+
+        Room room = roomRepository
+                .findById(roomId)
+                .orElseThrow(() -> new ResourceNotFoundException("Room not found with ID: "+roomId));
+
+        User user = getCurrentUser();
+
+        if(!user.equals(room.getHotel().getOwner())) throw new AccessDeniedException("You are not the owner of the room with id: "+roomId);
+
+        return inventoryRepository.findByRoomOrderByDate(room)
+                .stream()
+                .map(element-> modelMapper.map(element, InventoryDto.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public void updateInventory(Long roomId, UpdateInventoryRequestDto updateInventoryRequestDto) {
+        log.info("Updating All Inventory by room with id: "+roomId);
+
+        Room room = roomRepository
+                .findById(roomId)
+                .orElseThrow(() -> new ResourceNotFoundException("Room not found with ID: "+roomId));
+
+        User user = getCurrentUser();
+
+        if(!user.equals(room.getHotel().getOwner())) throw new AccessDeniedException("You are not the owner of the room with id: "+roomId);
+
+        //lock the inventory before updating it
+        inventoryRepository.getInventoryAndLockBeforeUpdate(roomId, updateInventoryRequestDto.getStartDate(), updateInventoryRequestDto.getEndDate());
+        inventoryRepository.updateInventory(roomId, updateInventoryRequestDto.getStartDate(), updateInventoryRequestDto.getEndDate(), updateInventoryRequestDto.getClosed(), updateInventoryRequestDto.getSurgeFactor());
     }
 }

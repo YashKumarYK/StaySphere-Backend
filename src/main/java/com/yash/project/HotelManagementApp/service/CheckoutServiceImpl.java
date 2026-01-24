@@ -70,7 +70,8 @@ public class CheckoutServiceImpl implements CheckoutService{
             return session.getUrl();
 
         }catch (StripeException e){
-            throw new RuntimeException(e);
+            log.error("Stripe API error while creating session for booking {}: {}", booking.getId(), e.getMessage(), e);
+            throw new RuntimeException("Payment session creation failed: " + e.getMessage());
         }
     }
 }

@@ -6,6 +6,8 @@ import com.yash.project.HotelManagementApp.dto.HotelPriceDto;
 import com.yash.project.HotelManagementApp.dto.HotelSearchRequest;
 import com.yash.project.HotelManagementApp.service.HotelService;
 import com.yash.project.HotelManagementApp.service.InventoryService;
+import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Page;
@@ -20,14 +22,16 @@ public class HotelBrowseController {
     private final InventoryService inventoryService;
     private final HotelService hotelService;
 
-    @GetMapping("/search")
-    public ResponseEntity<Page<HotelPriceDto>> searchHotel(@RequestBody HotelSearchRequest hotelSearchRequest){
+    @PostMapping("/search")
+    @Operation(summary = "Search hotels", tags = {"Browse Hotels"})
+    public ResponseEntity<Page<HotelPriceDto>> searchHotel(@Valid @RequestBody HotelSearchRequest hotelSearchRequest){
 
         Page<HotelPriceDto> page = inventoryService.searchHotels(hotelSearchRequest);
         return ResponseEntity.ok(page);
     }
 
     @GetMapping("/{hotelId}/info")
+    @Operation(summary = "Get a hotel info by hotelId", tags = {"Browse Hotels"})
     public ResponseEntity<HotelInfoDto> getHotelInfo(@PathVariable Long hotelId){
         HotelInfoDto  hotelInfo= hotelService.getHotelInfoById(hotelId);
         return ResponseEntity.ok(hotelInfo);
